@@ -35,6 +35,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Install unzip
+        run: apt-get install unzip
+
       - name: Install AWS CLI
         run: |
           if ! command -v aws &> /dev/null; then
@@ -75,6 +78,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Install unzip
+        run: apt-get install unzip
+
       - name: Install AWS CLI
         run: |
           if ! command -v aws &> /dev/null; then
@@ -107,6 +113,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Install unzip
+        run: apt-get install unzip
 
       - name: Install AWS CLI
         run: |
