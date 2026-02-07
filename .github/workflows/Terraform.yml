@@ -1,0 +1,135 @@
+name: Terraform Infrastructure
+run-name: Terraform ${{ inputs.action || (github.event_name == 'pull_request' && 'Plan' || 'Apply') }}
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Terraform action to perform'
+        required: true
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+        default: 'plan'
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.LXD_S3_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.LXD_S3_SECRET_KEY }}
+  TERRAFORM_VERSION: 1.5.0
+  LXD_ENDPOINT: ${{ secrets.LXD_S3_ENDPOINT }}
+  TFVARS_PATH: ./lxd.tfvars
+  TFVARS_REMOTE_PATH: secrets/terraform/vars/HomeOps/HomeOps.tfvars
+
+defaults:
+  run:
+    working-directory: Terraform
+
+jobs:
+  plan:
+    name: Terraform Plan
+    if: github.event_name != 'workflow_dispatch' || inputs.action == 'plan' || inputs.action == 'apply'
+    runs-on: self-hosted
+    environment: terraform-plan
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install AWS CLI
+        run: |
+          if ! command -v aws &> /dev/null; then
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install
+          else
+            echo "AWS CLI already installed"
+          fi
+
+      - name: Download Variables
+        run: aws s3 cp s3://${{ env.TFVARS_REMOTE_PATH }} ${{ env.TFVARS_PATH }} --endpoint-url "${{ env.LXD_ENDPOINT }}"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Terraform Init
+        run: terraform init -backend-config="endpoint=${{ env.LXD_ENDPOINT }}"
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -out tfplan -var-file=${{ env.TFVARS_PATH }}
+
+  apply:
+    name: Terraform Apply
+    needs: plan
+    if: |
+      github.ref == 'refs/heads/main' && 
+      (github.event_name == 'push' || 
+      (github.event_name == 'workflow_dispatch' && inputs.action == 'apply'))
+    runs-on: self-hosted
+    environment: 
+      name: terraform-production
+      url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install AWS CLI
+        run: |
+          if ! command -v aws &> /dev/null; then
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install
+          else
+            echo "AWS CLI already installed"
+          fi
+
+      - name: Download Variables
+        run: aws s3 cp s3://secrets/terraform/vars/HomeOps/HomeOps.tfvars ${{ env.TFVARS_PATH }} --endpoint-url "${{ env.LXD_ENDPOINT }}"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Terraform Init
+        run: terraform init -backend-config="endpoint=${{ env.LXD_ENDPOINT }}"
+
+      - name: Terraform Apply
+        run: terraform apply -parallelism=1 -auto-approve tfplan
+
+  destroy:
+    name: Terraform Destroy
+    if: github.event_name == 'workflow_dispatch' && inputs.action == 'destroy'
+    runs-on: self-hosted
+    environment: 
+      name: terraform-destroy
+      url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install AWS CLI
+        run: |
+          if ! command -v aws &> /dev/null; then
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install
+          else
+            echo "AWS CLI already installed"
+          fi
+
+      - name: Download Variables
+        run: aws s3 cp s3://secrets/terraform/vars/HomeOps/HomeOps.tfvars ${{ env.TFVARS_PATH }} --endpoint-url "${{ env.LXD_ENDPOINT }}"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Terraform Init
+        run: terraform init -backend-config="endpoint=${{ env.LXD_ENDPOINT }}"
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve -var-file=${{ env.TFVARS_PATH }}
