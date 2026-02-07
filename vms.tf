@@ -18,6 +18,9 @@ resource "lxd_instance" "kubernetes-node" {
     "boot.autostart"           = true
     "cloud-init.user-data"     = <<-EOT
       #cloud-init
+      package_update: true
+      packages:
+        - ansible
       runcmd:
         - ansible-pull -U https://github.com/tekore/Ansible.git -i localhost, playbooks/configureKubernetes.yml
     EOT
