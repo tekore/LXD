@@ -2,7 +2,7 @@ provider "lxd" {
   generate_client_certificates = false
   accept_remote_certificate    = true
   config_dir                   = "~/.terraform.d/lxd"
-  
+
   lxd_remote {
     name    = "lxd-host"
     scheme  = "https"

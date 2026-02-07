@@ -20,14 +20,10 @@ on:
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.LXD_S3_ACCESS_KEY }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.LXD_S3_SECRET_KEY }}
-  TERRAFORM_VERSION: 1.5.0
+  TERRAFORM_VERSION: 1.14.4
   LXD_ENDPOINT: ${{ secrets.LXD_S3_ENDPOINT }}
   TFVARS_PATH: ./lxd.tfvars
-  TFVARS_REMOTE_PATH: secrets/terraform/vars/HomeOps/HomeOps.tfvars
-
-defaults:
-  run:
-    working-directory: Terraform
+  TFVARS_REMOTE_PATH: secrets/terraform/lxd.tfvars
 
 jobs:
   plan:
