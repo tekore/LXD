@@ -1,5 +1,5 @@
 name: Terraform Infrastructure
-run-name: Terraform ${{ inputs.action || (github.event_name == 'pull_request' && 'Plan' || 'Apply') }}
+run-name: Terraform ${{ inputs.action || (github.event_name == 'pull_request' && 'Plan' || 'Build') }}
 on:
   pull_request:
     branches: [main]
