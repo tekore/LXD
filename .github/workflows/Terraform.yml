@@ -63,7 +63,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -out tfplan -var-file=${{ env.TFVARS_PATH }}
+        run: terraform plan -var-file=${{ env.TFVARS_PATH }}
 
   apply:
     name: Terraform Apply
@@ -103,7 +103,7 @@ jobs:
         run: terraform init -backend-config="endpoint=${{ env.LXD_ENDPOINT }}"
 
       - name: Terraform Apply
-        run: terraform apply -parallelism=1 -auto-approve tfplan
+        run: terraform apply -auto-approve -var-file=${{ env.TFVARS_PATH }}
 
   destroy:
     name: Terraform Destroy
