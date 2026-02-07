@@ -92,7 +92,7 @@ jobs:
           fi
 
       - name: Download Variables
-        run: aws s3 cp s3://secrets/terraform/vars/HomeOps/HomeOps.tfvars ${{ env.TFVARS_PATH }} --endpoint-url "${{ env.LXD_ENDPOINT }}"
+        run: aws s3 cp s3://${{ env.TFVARS_REMOTE_PATH }} ${{ env.TFVARS_PATH }} --endpoint-url "${{ env.LXD_ENDPOINT }}" --no-verify-ssl
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -121,9 +121,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install unzip
-        run: apt-get install unzip
-
       - name: Install AWS CLI
         run: |
           if ! command -v aws &> /dev/null; then
@@ -133,7 +130,7 @@ jobs:
           fi
 
       - name: Download Variables
-        run: aws s3 cp s3://secrets/terraform/vars/HomeOps/HomeOps.tfvars ${{ env.TFVARS_PATH }} --endpoint-url "${{ env.LXD_ENDPOINT }}"
+        run: aws s3 cp s3://${{ env.TFVARS_REMOTE_PATH }} ${{ env.TFVARS_PATH }} --endpoint-url "${{ env.LXD_ENDPOINT }}" --no-verify-ssl
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
