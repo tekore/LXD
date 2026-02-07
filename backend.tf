@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
-    bucket                      = "secrets"
-    key                         = "terraform/terraform.tfstate"
+    bucket                      = "terraform-state"
+    key                         = "terraform.tfstate"
     region                      = "auto"
     skip_credentials_validation = true
     skip_region_validation      = true
