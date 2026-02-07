@@ -17,7 +17,7 @@ resource "lxd_instance" "kubernetes-node" {
   config = {
     "boot.autostart"           = true
     "cloud-init.user-data"     = <<-EOT
-      #cloud-init
+      #cloud-config
       package_update: true
       packages:
         - ansible
