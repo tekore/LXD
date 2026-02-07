@@ -67,7 +67,6 @@ jobs:
 
   apply:
     name: Terraform Apply
-    needs: plan
     if: github.event_name == 'workflow_dispatch' && inputs.action == 'apply'
     runs-on: self-hosted
     environment: Production
