@@ -23,7 +23,7 @@ env:
   TERRAFORM_VERSION: 1.14.4
   LXD_ENDPOINT: ${{ secrets.LXD_S3_ENDPOINT }}
   TFVARS_PATH: ./lxd.tfvars
-  TFVARS_REMOTE_PATH: lxd.tfvars
+  TFVARS_REMOTE_PATH: terraform-state/lxd.tfvars
 
 jobs:
   plan:
