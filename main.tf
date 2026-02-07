@@ -9,7 +9,7 @@ terraform {
 provider "lxd" {
   generate_client_certificates = false
   accept_remote_certificate    = true
-  config_dir                   = "~/.terraform.d/lxd"
+  config_dir                   = "/home/runner/.terraform.d/lxd"
 
   remote {
     name    = "lxd-host"
