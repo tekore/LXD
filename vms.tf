@@ -10,10 +10,12 @@ resource "lxd_instance" "kubernetes-node" {
   description = "Kubernetes node"
   image       = lxd_cached_image.ubuntu2404.fingerprint
   type        = "virtual-machine"
+  limits = {
+    cpu    = 2
+    memory = "8192MB"
+  }
   config = {
     "boot.autostart"           = true
-    "limits.memory"            = "8192MB"
-    "limits.memory.enforce"    = "hard"
     "cloud-init.user-data"     = <<-EOT
       #cloud-init
       runcmd:
