@@ -10,4 +10,10 @@ provider "lxd" {
   generate_client_certificates = false
   accept_remote_certificate    = true
   config_dir                   = "~/.terraform.d/lxd"
+
+  remote {
+    name    = "lxd-host"
+    address = "https://${var.lxd-host.address}:${var.lxd-host.port}"
+    default = true
+  }
 }
