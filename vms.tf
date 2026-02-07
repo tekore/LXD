@@ -4,17 +4,22 @@ resource "lxd_cached_image" "ubuntu2404" {
   type          = "virtual-machine"
 }
 
-resource "lxd_instance" "instance1" {
-  count = 3
-  name  = "instance-${count.index}"
-  image = lxd_cached_image.ubuntu2404.fingerprint
-  type = "virtual-machine"
+resource "lxd_instance" "kubernetes-node" {
+  count       = 3
+  name        = "Kubernetes-${count.index}"
+  description = "Kubernetes node"
+  image       = lxd_cached_image.ubuntu2404.fingerprint
+  type        = "virtual-machine"
   config = {
-    "boot.autostart" = true
-  }
-  limits = {
-    cpu = 2
+    "boot.autostart"           = true
+    "limits.memory"            = "8192MB"
+    "limits.memory.enforce"    = "hard"
+    "cloud-init.user-data"     = <<-EOT
+      #cloud-init
+      runcmd:
+        - ansible-pull -U https://github.com/tekore/Ansible.git -i localhost, playbooks/configureKubernetes.yml
+    EOT
   }
   ephemeral = false
-  depends_on = [ lxd_cached_image.ubuntu2404 ]
+  depends_on = [lxd_cached_image.ubuntu2404]
 }
