@@ -5,7 +5,7 @@ resource "lxd_cached_image" "ubuntu2404" {
 }
 
 resource "lxd_instance" "instance1" {
-  count = 30
+  count = 3
   name  = "instance-${count.index}"
   image = lxd_cached_image.ubuntu2404.fingerprint
   type = "virtual-machine"
