@@ -109,9 +109,7 @@ jobs:
     name: Terraform Destroy
     if: github.event_name == 'workflow_dispatch' && inputs.action == 'destroy'
     runs-on: self-hosted
-    environment: 
-      name: terraform-destroy
-      url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    environment: Production
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
