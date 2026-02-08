@@ -11,8 +11,8 @@ resource "lxd_instance" "kubernetes-node" {
   image       = lxd_cached_image.ubuntu2404.fingerprint
   type        = "virtual-machine"
   limits = {
-    cpu    = 2
-    memory = "8192MB"
+    cpu    = 4
+    memory = "8000MB"
   }
   config = {
     "boot.autostart"           = true
