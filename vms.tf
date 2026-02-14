@@ -12,7 +12,7 @@ resource "lxd_instance" "kubernetes-node" {
   type        = "virtual-machine"
   limits = {
     cpu    = 4
-    memory = "8000MB"
+    memory = "8192MB"
   }
   config = {
     "boot.autostart"           = true
