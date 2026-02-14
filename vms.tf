@@ -22,6 +22,7 @@ resource "lxd_instance" "kubernetes-node" {
       packages:
         - ansible
       runcmd:
+        - ansible-pull -U https://github.com/tekore/Ansible.git -i localhost, playbooks/provisionNewServer.yml
         - ansible-pull -U https://github.com/tekore/Ansible.git -i localhost, playbooks/configureKubernetes.yml
     EOT
   }
