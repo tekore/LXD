@@ -14,6 +14,15 @@ resource "lxd_instance" "kubernetes-node" {
     cpu    = 4
     memory = "8192MB"
   }
+  device {
+    name = "root"
+    type = "disk"
+    properties = {
+      pool = "storage-pool"
+      path = "/"
+      size = "25GB"
+    }
+  }
   config = {
     "boot.autostart"           = true
     "cloud-init.user-data"     = <<-EOT
