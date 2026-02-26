@@ -23,34 +23,8 @@ resource "lxd_instance" "kubernetes-node" {
       size = "25GB"
     }
   }
-  device {
-    name = "eth0"
-    type = "nic"
-    properties = {
-      # [Description] lxbr0 is the default bridge created by LXD
-      network     = "lxdbr0"
-      "ipv4.address" = "192.168.1.10${count.index}"
-    }
-  }
   config = {
     "boot.autostart"           = true
-    "cloud-init.network-config" = <<-EOT
-      version: 2
-      ethernets:
-        eth0:
-          match:
-            name: "en*"
-          set-name: eth0
-          addresses: [192.168.1.10${count.index}/24]
-          nameservers:
-            addresses: [1.1.1.1, 8.8.8.8]
-          routes:
-            - to: default
-              via: 192.168.1.1
-            - to: 192.168.1.1/32
-              via: 0.0.0.0
-              scope: link
-    EOT
     "cloud-init.user-data" = <<-EOT
       #cloud-config
       package_update: true
