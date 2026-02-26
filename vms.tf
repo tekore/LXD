@@ -29,7 +29,7 @@ resource "lxd_instance" "kubernetes-node" {
     properties = {
       # [Description] lxbr0 is the default bridge created by LXD
       network     = "lxbr0"
-      "ipv4.address" = "192.168.1.10${count}"
+      "ipv4.address" = "192.168.1.10${count.index}"
     }
   }
   config = {
