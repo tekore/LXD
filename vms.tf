@@ -23,6 +23,15 @@ resource "lxd_instance" "kubernetes-node" {
       size = "25GB"
     }
   }
+  device {
+    name = "eth0"
+    type = "nic"
+    properties = {
+      # [Description] lxbr0 is the default bridge created by LXD
+      network     = "lxbr0"
+      "ipv4.address" = "192.168.1.10${count}"
+    }
+  }
   config = {
     "boot.autostart"           = true
     "cloud-init.user-data"     = <<-EOT
