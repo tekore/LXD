@@ -33,8 +33,8 @@ resource "lxd_instance" "kubernetes-node" {
     }
   }
   config = {
-    "boot.autostart"           = true
-    "cloud-init.user-data"     = <<-EOT
+    "boot.autostart"       = true
+    "cloud-init.user-data" = <<-EOT
       #cloud-config
       package_update: true
       packages:
@@ -42,6 +42,17 @@ resource "lxd_instance" "kubernetes-node" {
       runcmd:
         - ansible-pull -U https://github.com/tekore/Ansible.git -i localhost, playbooks/provisionNewServer.yml
         - ansible-pull -U https://github.com/tekore/Ansible.git -i localhost, playbooks/configureKubernetes.yml
+      network:
+        version: 2
+        ethernets:
+          eth0:
+            match:
+              name: "en*"
+            set-name: eth0
+            addresses: [192.168.1.10${count.index}/24]
+            gateway4: 192.168.1.1
+            nameservers:
+              addresses: [1.1.1.1, 8.8.8.8]
     EOT
   }
   ephemeral = false
