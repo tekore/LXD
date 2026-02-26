@@ -50,9 +50,11 @@ resource "lxd_instance" "kubernetes-node" {
               name: "en*"
             set-name: eth0
             addresses: [192.168.1.10${count.index}/24]
-            gateway4: 192.168.1.1
             nameservers:
               addresses: [1.1.1.1, 8.8.8.8]
+            routes:
+              - to: default
+                via: 192.168.1.1
     EOT
   }
   ephemeral = false
