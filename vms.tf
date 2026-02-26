@@ -47,6 +47,9 @@ resource "lxd_instance" "kubernetes-node" {
           routes:
             - to: default
               via: 192.168.1.1
+            - to: 192.168.1.1/32
+              via: 0.0.0.0
+              scope: link
     EOT
     "cloud-init.user-data" = <<-EOT
       #cloud-config
